@@ -1,21 +1,18 @@
-version: '3.8'
-
 services:
   orchestrator:
     build: .
+    container_name: tender-orchestrator
     ports:
       - "8080:8000"
     environment:
-      # Настройки классификатора
-      - CLASSIFIER_URL=http://classifier:8000/api/v1/tender/classify-tender
+      # URLs сервисов
+      - CLASSIFIER_URL=${CLASSIFIER_URL:-http://classifier:8000/api/v1/tender/classify-tender}
+      - STANDARDIZER_URL=${STANDARDIZER_URL:-http://standardizer:8000/api/v1/standardization/tender/standardize}
+      - MATCHER_URL=${MATCHER_URL:-http://matcher:8002/api/v1/tenders/match}
+
+      # API ключи сервисов
       - CLASSIFIER_API_KEY=${CLASSIFIER_API_KEY}
-
-      # Настройки стандартизатора
-      - STANDARDIZER_URL=http://standardizer:8000/api/v1/standardize
       - STANDARDIZER_API_KEY=${STANDARDIZER_API_KEY}
-
-      # Настройки сервиса подбора товаров
-      - MATCHER_URL=http://matcher:8000/api/v1/match
       - MATCHER_API_KEY=${MATCHER_API_KEY}
 
       # Настройки оркестратора
@@ -23,7 +20,7 @@ services:
       - ORCHESTRATOR_API_KEY=${ORCHESTRATOR_API_KEY}
 
       # Общие настройки
-      - REQUEST_TIMEOUT=300
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-300}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
 
     networks:
@@ -31,6 +28,12 @@ services:
 
     restart: unless-stopped
 
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   tender-network:
-    external: true
+    driver: bridge
