@@ -1,14 +1,18 @@
 services:
   orchestrator:
     build: .
+    env_file:
+      - .env
     container_name: tender-orchestrator
     ports:
       - "8080:8000"
     environment:
       # URLs сервисов
-      - CLASSIFIER_URL=${CLASSIFIER_URL:-http://classifier:8000/api/v1/tender/classify-tender}
-      - STANDARDIZER_URL=${STANDARDIZER_URL:-http://standardizer:8000/api/v1/standardization/tender/standardize}
-      - MATCHER_URL=${MATCHER_URL:-http://matcher:8002/api/v1/tenders/match}
+      - CLASSIFIER_URL=http://okpd2_classifier:8000/api/v1/tender/classify-tender
+      - STANDARDIZER_URL=http://standardizer-service:8000/api/v1/standardization/tender/standardize
+      - MATCHER_URL=http://tender_positions_match_service:8000/api/v1/tenders/match
+
+
 
       # API ключи сервисов
       - CLASSIFIER_API_KEY=${CLASSIFIER_API_KEY}
@@ -24,7 +28,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
 
     networks:
-      - tender-network
+      - tender-services
 
     restart: unless-stopped
 
@@ -35,5 +39,5 @@ services:
       retries: 3
 
 networks:
-  tender-network:
-    driver: bridge
+  tender-services:
+    external: true

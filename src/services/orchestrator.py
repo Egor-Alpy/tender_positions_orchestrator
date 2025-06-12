@@ -64,7 +64,8 @@ class TenderOrchestrator:
 
         # Извлекаем обновленный тендер
         if "tender" in response:
-            result = response["tender"]
+            # result = response["tender"]
+            result = response
         else:
             result = response
 

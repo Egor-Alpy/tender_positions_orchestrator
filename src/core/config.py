@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     """Настройки оркестратора"""
 
     # URLs сервисов
-    CLASSIFIER_URL: str = "http://classifier:8000/api/v1/tender/classify-tender"
+    CLASSIFIER_URL: str = "http://localhost:8000/api/v1/tender/classify-tender"
     STANDARDIZER_URL: str = "http://standardizer:8000/api/v1/standardization/tender/standardize"
     MATCHER_URL: str = "http://matcher:8002/api/v1/tenders/match"
 

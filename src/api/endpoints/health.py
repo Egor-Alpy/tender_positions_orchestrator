@@ -34,6 +34,8 @@ async def detailed_health_check():
         "matcher": settings.MATCHER_URL.replace("/api/v1/tenders/match", "/health")
     }
 
+    logger.info(f"health urls:\n{health_urls}")
+
     async with ServiceClient(timeout=5.0) as client:
         # Проверяем каждый сервис
         for service_name, health_url in health_urls.items():
